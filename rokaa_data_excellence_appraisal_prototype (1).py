@@ -34,7 +34,7 @@ segment = st.selectbox(
     "Which best describes your organisation?",
     ["Startup", "SME", "Corporate"], key="segment"
 )
-st.session_state["segment"] = segment
+
 company_name = st.text_input("What is your company name?", key="company_name")
 industry = st.selectbox(
     "Which industry best describes your business?",
