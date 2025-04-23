@@ -64,7 +64,7 @@ st.divider()
 # --- Proceed to Assessment ---
 if st.button("Next: Begin Assessment"):
     st.session_state["ready_for_assessment"] = True
-    st.rerun()
+    st.rerund()
 
 # --- Section C: Data Maturity Assessment Questions ---
 if st.session_state.get("ready_for_assessment"):
