@@ -45,12 +45,12 @@ years_operating = st.number_input(
     min_value=0, max_value=100, value=0,
     help="Enter 0 if you’re pre-launch or just formed.", key="years_operating"
 )
-st.session_state["years_operating"] = years_operating
+
 funding_status = st.radio(
     "What is your current funding status?",
     ["Self-funded / Bootstrapped", "Pre-seed / Seed", "Series A+", "Not sure"], key="funding_status"
 )
-st.session_state["funding_status"] = funding_status
+
 markets = st.multiselect(
     "Which markets do you serve?",
     ["Australia","New Zealand","Asia-Pacific","North America","Europe","Latin America","Other"], key="markets"
