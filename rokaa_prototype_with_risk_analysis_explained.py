@@ -91,6 +91,27 @@ if st.session_state.get("ready_for_assessment"):
         fig.add_trace(go.Scatterpolar(r=aspirational + [aspirational[0]], theta=categories + [categories[0]], fill='toself', name='Your Aspirational Maturity'))
         fig.update_layout(polar=dict(radialaxis=dict(range=[0, 100])), showlegend=True)
         st.plotly_chart(fig)
+        # --- Opportunities for Business Growth ---
+st.subheader("Opportunities for Business Growth")
+
+industry_cases = {
+    "HealthTech": [
+        {"title": "📈 Patient Flow Optimization", "desc": "Streamline onboarding with standardized data models and centralized data catalogs.", "value": "Potential Value: Reduce admin time by 20% across care sites."},
+        {"title": "⚙️ AI-Ready Data Infrastructure", "desc": "Governed, high-quality data enables ML-driven triage and virtual health.", "value": "Potential Value: Speed to MVP by 3–6 months."},
+        {"title": "📊 Clinical Compliance Acceleration", "desc": "Automate regulatory reporting (e.g., for GDPR, HIPAA) with structured metadata.", "value": "Potential Value: Save $50K+ in audit and admin overhead."}
+    ],
+    "FinTech": [
+        {"title": "💡 Customer Segmentation & Personalization", "desc": "Use trusted data to enable personalized product offers and retention models.", "value": "Potential Value: 15–30% lift in customer conversion."},
+        {"title": "🔒 Risk & Fraud Detection", "desc": "Improve fraud detection accuracy with consistent metadata and training data.", "value": "Potential Value: $100K+ in fraud mitigation annually."}
+    ]
+}
+
+if industry in industry_cases:
+    for case in industry_cases[industry][:3]:
+        st.markdown(f"**{case['title']}**  \n{case['desc']}  \n*{case['value']}*  \n")
+else:
+    st.info("We’ll tailor growth opportunities as we learn more about your industry.")
+
         # --- Enhanced Risk Engine with "Why This Matters" ---
         st.subheader("Key Risks Identified")
 
