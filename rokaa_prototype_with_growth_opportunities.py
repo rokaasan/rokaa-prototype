@@ -39,12 +39,39 @@ if "segment" not in st.session_state:
 if "industry" not in st.session_state:
     st.session_state["industry"] = ""
 
-st.session_state["segment"] = st.selectbox("Which best describes your organisation?", ["Startup", "SME", "Corporate"], key="segment_select")
+st.session_state["segment"] = st.selectbox(
+    "Which best describes your organisation?", 
+    ["Startup", "SME", "Corporate"], 
+    key="segment_select"
+)
+
 company_name = st.text_input("What is your company name?", key="company_name")
-st.session_state["industry"] = st.selectbox("Which industry best describes your business?", ["HealthTech", "FinTech", "B2B SaaS", "Climate-Tech", "EdTech", "Other"], key="industry_select")
-years_operating = st.number_input("How many years has your company been operating?", min_value=0, max_value=100, value=0, key="years_operating")
-funding_status = st.radio("What is your current funding status?", ["Self-funded / Bootstrapped", "Pre-seed / Seed", "Series A+", "Not sure"], key="funding_status")
-markets = st.multiselect("Which markets do you serve?", ["Australia", "New Zealand", "Asia-Pacific", "North America", "Europe", "Latin America", "Other"], key="markets")
+
+st.session_state["industry"] = st.selectbox(
+    "Which industry best describes your business?", 
+    ["HealthTech", "FinTech", "B2B SaaS", "Climate-Tech", "EdTech", "Other"], 
+    key="industry_select"
+)
+
+years_operating = st.number_input(
+    "How many years has your company been operating?", 
+    min_value=0, max_value=100, 
+    value=0, 
+    key="years_operating"
+)
+
+funding_status = st.radio(
+    "What is your current funding status?", 
+    ["Self-funded / Bootstrapped", "Pre-seed / Seed", "Series A+", "Not sure"], 
+    key="funding_status"
+)
+
+markets = st.multiselect(
+    "Which markets do you serve?", 
+    ["Australia", "New Zealand", "Asia-Pacific", "North America", "Europe", "Latin America", "Other"], 
+    key="markets"
+)
+
 challenges = st.text_area("What are the biggest challenges you’re facing right now?", key="challenges")
 goals = st.text_area("What do you hope to achieve in the next 12–24 months?", key="goals")
 
@@ -54,6 +81,7 @@ st.divider()
 if st.button("Next: Begin Assessment"):
     st.session_state["ready_for_assessment"] = True
     st.rerun()
+
 if st.session_state.get("ready_for_assessment"):
     st.header("Data Maturity Assessment")
 
