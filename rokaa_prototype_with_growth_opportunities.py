@@ -21,6 +21,7 @@ if bot_question:
                     "That’s a great question! I’ll flag this for deeper support in the future.")
     st.sidebar.markdown(f"**Joey:** {response}")
 
+# --- Progress Bar ---
 if not st.session_state.get("ready_for_assessment"):
     st.progress(20)
 elif not st.session_state.get("assessment_submitted"):
@@ -30,17 +31,24 @@ else:
 
 st.divider()
 
+# --- Capture Basic KYC with safer session storage ---
 st.header("Tell us about your business")
-segment = st.selectbox("Which best describes your organisation?", ["Startup", "SME", "Corporate"], key="segment")
+
+if "segment" not in st.session_state:
+    st.session_state["segment"] = ""
+if "industry" not in st.session_state:
+    st.session_state["industry"] = ""
+
+st.session_state["segment"] = st.selectbox("Which best describes your organisation?", ["Startup", "SME", "Corporate"], key="segment_select")
 company_name = st.text_input("What is your company name?", key="company_name")
-industry = st.selectbox("Which industry best describes your business?", ["HealthTech", "FinTech", "B2B SaaS", "Climate-Tech", "EdTech", "Other"], key="industry")
+st.session_state["industry"] = st.selectbox("Which industry best describes your business?", ["HealthTech", "FinTech", "B2B SaaS", "Climate-Tech", "EdTech", "Other"], key="industry_select")
 years_operating = st.number_input("How many years has your company been operating?", min_value=0, max_value=100, value=0, key="years_operating")
 funding_status = st.radio("What is your current funding status?", ["Self-funded / Bootstrapped", "Pre-seed / Seed", "Series A+", "Not sure"], key="funding_status")
 markets = st.multiselect("Which markets do you serve?", ["Australia", "New Zealand", "Asia-Pacific", "North America", "Europe", "Latin America", "Other"], key="markets")
 challenges = st.text_area("What are the biggest challenges you’re facing right now?", key="challenges")
 goals = st.text_area("What do you hope to achieve in the next 12–24 months?", key="goals")
 
-st.success(f"You are a **{segment}** operating for **{years_operating}** years, currently **{funding_status}**.")
+st.success(f"You are a **{st.session_state['segment']}** operating for **{years_operating}** years, currently **{funding_status}**.")
 st.divider()
 
 if st.button("Next: Begin Assessment"):
@@ -73,9 +81,9 @@ if st.session_state.get("ready_for_assessment"):
         dq_score = (score_map[dq1] + score_map[dq2]) / 3.0 * 80
         mm_score = (score_map[mm1] + score_map[mm2]) / 3.0 * 80
 
-        if segment == "Startup":
+        if st.session_state["segment"] == "Startup":
             baseline = [40, 35, 30]
-        elif segment == "SME":
+        elif st.session_state["segment"] == "SME":
             baseline = [60, 55, 50]
         else:
             baseline = [75, 70, 65]
@@ -107,8 +115,11 @@ if st.session_state.get("ready_for_assessment"):
             ]
         }
 
-        if industry in industry_cases:
-            for case in industry_cases[industry][:3]:
+        industry_selected = st.session_state["industry"]
+        st.write(f"DEBUG: You selected industry = {industry_selected}")  # (Temporary debug helper)
+
+        if industry_selected in industry_cases:
+            for case in industry_cases[industry_selected][:3]:
                 st.markdown(f"**{case['title']}**  \n{case['desc']}  \n*{case['value']}*  \n")
         else:
             st.info("We’ll tailor growth opportunities as we learn more about your industry.")
@@ -131,7 +142,7 @@ if st.session_state.get("ready_for_assessment"):
             if dq_score < 60 or dg_score < 60:
                 risks.append("⚠️ *AI Risk*: AI/ML ambitions with insufficient data maturity.\n**Why this matters:** Poor data foundations will lead to unreliable models, biased outcomes, and operational inefficiencies.")
 
-        if segment == "Startup" and dg_score < 40:
+        if st.session_state["segment"] == "Startup" and dg_score < 40:
             risks.append("⚠️ *Foundational Risk*: Low governance in early-stage company.\n**Why this matters:** Startups that neglect data structure early face scalability issues and trust breakdowns later.")
 
         if risks:
@@ -146,10 +157,11 @@ if st.session_state.get("ready_for_assessment"):
         pdf.set_font("Arial", "B", 16)
         pdf.cell(0, 10, "ROKAA Data Excellence Appraisal Prototype", ln=True)
         pdf.set_font("Arial", "", 12)
-        pdf.cell(0, 10, f"Segment: {segment}", ln=True)
+        pdf.cell(0, 10, f"Segment: {st.session_state['segment']}", ln=True)
         pdf.cell(0, 10, f"Governance Score: {dg_score:.0f}%", ln=True)
         pdf.cell(0, 10, f"Quality Score: {dq_score:.0f}%", ln=True)
         pdf.cell(0, 10, f"Metadata Score: {mm_score:.0f}%", ln=True)
         tmp = tempfile.NamedTemporaryFile(delete=False, suffix=".pdf")
         pdf.output(tmp.name)
         st.download_button("Download Report (PDF)", data=open(tmp.name, 'rb').read(), file_name="ROKAA_Report.pdf", mime="application/pdf")
+
