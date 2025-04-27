@@ -99,6 +99,8 @@ if st.session_state.get("ready_for_assessment"):
         fig.add_trace(go.Scatterpolar(r=aspirational + [aspirational[0]], theta=categories + [categories[0]], fill='toself', name='Your Aspirational Maturity'))
         fig.update_layout(polar=dict(radialaxis=dict(range=[0, 100])), showlegend=True)
         st.plotly_chart(fig)
+st.write(f"DEBUG: Industry captured = {st.session_state['industry']}")
+
 
         # --- Opportunities for Business Growth ---
         st.subheader("Opportunities for Business Growth")
