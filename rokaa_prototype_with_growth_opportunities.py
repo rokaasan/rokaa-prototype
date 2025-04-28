@@ -113,12 +113,12 @@ if st.session_state.get("ready_for_assessment"):
 
 # 🛡️ After submission, show radar, opportunities, risks, pdf
 if st.session_state.get("assessment_submitted"):
-    dg_score = st.session_state["dg_score"]
-    dq_score = st.session_state["dq_score"]
-    mm_score = st.session_state["mm_score"]
-    asp_gov = st.session_state["asp_gov"]
-    asp_qual = st.session_state["asp_qual"]
-    asp_meta = st.session_state["asp_meta"]
+
+    # --- Radar Chart ---
+    st.subheader("Your Data Maturity Overview (%)")
+    categories = ["Data Governance", "Data Quality", "Metadata Management"]
+    user_values = [st.session_state["dg_score"], st.session_state["dq_score"], st.session_state["mm_score"]]
+    aspirational = [st.session_state["asp_gov"], st.session_state["asp_qual"], st.session_state["asp_meta"]]
 
     if st.session_state["segment"] == "Startup":
         baseline = [40, 35, 30]
@@ -127,11 +127,6 @@ if st.session_state.get("assessment_submitted"):
     else:
         baseline = [75, 70, 65]
 
-    st.subheader("Your Data Maturity Overview (%)")
-    categories = ["Data Governance", "Data Quality", "Metadata Management"]
-    user_values = [dg_score, dq_score, mm_score]
-    aspirational = [asp_gov, asp_qual, asp_meta]
-
     fig = go.Figure()
     fig.add_trace(go.Scatterpolar(r=baseline + [baseline[0]], theta=categories + [categories[0]], fill='none', name='Peer Baseline'))
     fig.add_trace(go.Scatterpolar(r=user_values + [user_values[0]], theta=categories + [categories[0]], fill='toself', name='Your Current Maturity'))
@@ -139,50 +134,52 @@ if st.session_state.get("assessment_submitted"):
     fig.update_layout(polar=dict(radialaxis=dict(range=[0, 100])), showlegend=True)
     st.plotly_chart(fig)
 
-# --- Opportunities for Business Growth ---
-st.subheader("Opportunities for Business Growth")
+    # --- Opportunities for Business Growth ---
+    st.subheader("Opportunities for Business Growth")
 
-industry_cases = {
-    "HealthTech": [
-        {"title": "📈 Patient Flow Optimization", "desc": "Streamline onboarding with standardized data models and centralized data catalogs.", "value": "Potential Value: Reduce admin time by 20% across care sites."},
-        {"title": "⚙️ AI-Ready Data Infrastructure", "desc": "Governed, high-quality data enables ML-driven triage and virtual health.", "value": "Potential Value: Speed to MVP by 3–6 months."},
-        {"title": "📊 Clinical Compliance Acceleration", "desc": "Automate regulatory reporting (e.g., for GDPR, HIPAA) with structured metadata.", "value": "Potential Value: Save $50K+ in audit and admin overhead."}
-    ],
-    "FinTech": [
-        {"title": "💡 Customer Segmentation & Personalization", "desc": "Use trusted data to enable personalized product offers and retention models.", "value": "Potential Value: 15–30% lift in customer conversion."},
-        {"title": "🔒 Risk & Fraud Detection", "desc": "Improve fraud detection accuracy with consistent metadata and training data.", "value": "Potential Value: $100K+ in fraud mitigation annually."}
-    ]
-}
+    industry_cases = {
+        "HealthTech": [
+            {"title": "📈 Patient Flow Optimization", "desc": "Streamline onboarding with standardized data models and centralized data catalogs.", "value": "Potential Value: Reduce admin time by 20% across care sites."},
+            {"title": "⚙️ AI-Ready Data Infrastructure", "desc": "Governed, high-quality data enables ML-driven triage and virtual health.", "value": "Potential Value: Speed to MVP by 3–6 months."},
+            {"title": "📊 Clinical Compliance Acceleration", "desc": "Automate regulatory reporting (e.g., for GDPR, HIPAA) with structured metadata.", "value": "Potential Value: Save $50K+ in audit and admin overhead."}
+        ],
+        "FinTech": [
+            {"title": "💡 Customer Segmentation & Personalization", "desc": "Use trusted data to enable personalized product offers and retention models.", "value": "Potential Value: 15–30% lift in customer conversion."},
+            {"title": "🔒 Risk & Fraud Detection", "desc": "Improve fraud detection accuracy with consistent metadata and training data.", "value": "Potential Value: $100K+ in fraud mitigation annually."}
+        ]
+    }
 
-# Safely get industry selection
-industry_selected = st.session_state.get("industry", "")
+    industry_selected = st.session_state.get("industry", "")
 
-if industry_selected and industry_selected in industry_cases:
-    for case in industry_cases[industry_selected]:
-        st.markdown(f"**{case['title']}**  \n{case['desc']}  \n*{case['value']}*  \n")
-else:
-    st.info("We’ll tailor growth opportunities as we learn more about your industry.")
-
+    if industry_selected and industry_selected in industry_cases:
+        for case in industry_cases[industry_selected]:
+            st.markdown(f"**{case['title']}**  \n{case['desc']}  \n*{case['value']}*  \n")
+    else:
+        st.info("We’ll tailor growth opportunities as we learn more about your industry.")
 
     # --- Key Risks Identified ---
     st.subheader("Key Risks Identified")
     risks = []
 
+    markets = st.session_state.get("markets", [])
+
     if "Europe" in markets or "North America" in markets:
-        if dg_score < 60:
+        if st.session_state["dg_score"] < 60:
             risks.append("⚠️ *Regulatory Exposure*: You're operating in international markets but lack strong data governance.\n**Why this matters:** Regulations like GDPR and CCPA carry significant penalties and reputational risks.")
 
-    if dq_score < 50:
+    if st.session_state["dq_score"] < 50:
         risks.append("⚠️ *Poor Data Quality*: Inadequate checks on critical data.\n**Why this matters:** Poor data quality leads to bad decisions, customer dissatisfaction, and limits automation or AI effectiveness.")
 
-    if mm_score < 50:
+    if st.session_state["mm_score"] < 50:
         risks.append("⚠️ *Metadata Gaps*: Weak or missing metadata practices.\n**Why this matters:** Without metadata, teams waste time finding, understanding, and revalidating data.")
 
+    goals = st.session_state.get("goals", "")
+
     if "ai" in goals.lower() or "machine learning" in goals.lower():
-        if dq_score < 60 or dg_score < 60:
+        if st.session_state["dq_score"] < 60 or st.session_state["dg_score"] < 60:
             risks.append("⚠️ *AI Risk*: AI/ML ambitions with insufficient data maturity.\n**Why this matters:** Poor data foundations will lead to unreliable models, biased outcomes, and operational inefficiencies.")
 
-    if st.session_state["segment"] == "Startup" and dg_score < 40:
+    if st.session_state["segment"] == "Startup" and st.session_state["dg_score"] < 40:
         risks.append("⚠️ *Foundational Risk*: Low governance in early-stage company.\n**Why this matters:** Startups that neglect data structure early face scalability issues and trust breakdowns later.")
 
     if risks:
@@ -198,11 +195,12 @@ else:
     pdf.cell(0, 10, "ROKAA Data Excellence Appraisal Prototype", ln=True)
     pdf.set_font("Arial", "", 12)
     pdf.cell(0, 10, f"Segment: {st.session_state['segment']}", ln=True)
-    pdf.cell(0, 10, f"Governance Score: {dg_score:.0f}%", ln=True)
-    pdf.cell(0, 10, f"Quality Score: {dq_score:.0f}%", ln=True)
-    pdf.cell(0, 10, f"Metadata Score: {mm_score:.0f}%", ln=True)
+    pdf.cell(0, 10, f"Governance Score: {st.session_state['dg_score']:.0f}%", ln=True)
+    pdf.cell(0, 10, f"Quality Score: {st.session_state['dq_score']:.0f}%", ln=True)
+    pdf.cell(0, 10, f"Metadata Score: {st.session_state['mm_score']:.0f}%", ln=True)
     tmp = tempfile.NamedTemporaryFile(delete=False, suffix=".pdf")
     pdf.output(tmp.name)
     st.download_button("Download Report (PDF)", data=open(tmp.name, 'rb').read(), file_name="ROKAA_Report.pdf", mime="application/pdf")
+
 
 
