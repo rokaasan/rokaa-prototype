@@ -49,7 +49,7 @@ company_name = st.text_input("What is your company name?", key="company_name")
 
 st.session_state["industry"] = st.selectbox(
     "Which industry best describes your business?", 
-    ["HealthTech", "FinTech", "B2B SaaS", "Climate-Tech", "EdTech", "Other"], 
+    ["HealthTech", "FinTech", "B2B SaaS", "ClimateTech", "EdTech", "Other"], 
     key="industry_select"
 )
 
