@@ -102,23 +102,33 @@ if st.session_state.get("ready_for_assessment"):
     asp_qual = st.slider("Desired future state for Data Quality", 0, 100, 70)
     asp_meta = st.slider("Desired future state for Metadata Management", 0, 100, 70)
 
-    if st.button("Submit Assessment"):
-    st.session_state["assessment_submitted"] = True
-    st.session_state["dg_score"] = (score_map[dg1] + score_map[dg2]) / 3.0 * 80
-    st.session_state["dq_score"] = (score_map[dq1] + score_map[dq2]) / 3.0 * 80
-    st.session_state["mm_score"] = (score_map[mm1] + score_map[mm2]) / 3.0 * 80
-    st.session_state["asp_gov"] = asp_gov
-    st.session_state["asp_qual"] = asp_qual
-    st.session_state["asp_meta"] = asp_meta
+    # Define score_map here
+    score_map = {"Yes": 2, "No": 0, "In Progress": 1, "Not Sure": 0, "Somewhat": 1, "Partially": 1}
 
-# 🛡️ After submission, show radar, opportunities, risks, pdf
+    if st.button("Submit Assessment"):
+        st.session_state["assessment_submitted"] = True
+        st.session_state["dg_score"] = (score_map[dg1] + score_map[dg2]) / 3.0 * 80
+        st.session_state["dq_score"] = (score_map[dq1] + score_map[dq2]) / 3.0 * 80
+        st.session_state["mm_score"] = (score_map[mm1] + score_map[mm2]) / 3.0 * 80
+        st.session_state["asp_gov"] = asp_gov
+        st.session_state["asp_qual"] = asp_qual
+        st.session_state["asp_meta"] = asp_meta
+        st.rerun()
 if st.session_state.get("assessment_submitted"):
 
-    # --- Radar Chart ---
     st.subheader("Your Data Maturity Overview (%)")
+
     categories = ["Data Governance", "Data Quality", "Metadata Management"]
-    user_values = [st.session_state["dg_score"], st.session_state["dq_score"], st.session_state["mm_score"]]
-    aspirational = [st.session_state["asp_gov"], st.session_state["asp_qual"], st.session_state["asp_meta"]]
+    user_values = [
+        st.session_state["dg_score"],
+        st.session_state["dq_score"],
+        st.session_state["mm_score"]
+    ]
+    aspirational = [
+        st.session_state["asp_gov"],
+        st.session_state["asp_qual"],
+        st.session_state["asp_meta"]
+    ]
 
     if st.session_state["segment"] == "Startup":
         baseline = [40, 35, 30]
@@ -150,7 +160,6 @@ if st.session_state.get("assessment_submitted"):
     }
 
     industry_selected = st.session_state.get("industry", "")
-
     if industry_selected and industry_selected in industry_cases:
         for case in industry_cases[industry_selected]:
             st.markdown(f"**{case['title']}**  \n{case['desc']}  \n*{case['value']}*  \n")
@@ -160,8 +169,8 @@ if st.session_state.get("assessment_submitted"):
     # --- Key Risks Identified ---
     st.subheader("Key Risks Identified")
     risks = []
-
     markets = st.session_state.get("markets", [])
+    goals = st.session_state.get("goals", "")
 
     if "Europe" in markets or "North America" in markets:
         if st.session_state["dg_score"] < 60:
@@ -172,8 +181,6 @@ if st.session_state.get("assessment_submitted"):
 
     if st.session_state["mm_score"] < 50:
         risks.append("⚠️ *Metadata Gaps*: Weak or missing metadata practices.\n**Why this matters:** Without metadata, teams waste time finding, understanding, and revalidating data.")
-
-    goals = st.session_state.get("goals", "")
 
     if "ai" in goals.lower() or "machine learning" in goals.lower():
         if st.session_state["dq_score"] < 60 or st.session_state["dg_score"] < 60:
@@ -188,7 +195,7 @@ if st.session_state.get("assessment_submitted"):
     else:
         st.success("✅ No major data risks identified — great foundation to build on!")
 
-    # --- PDF Report Summary ---
+    # --- PDF Summary ---
     pdf = FPDF()
     pdf.add_page()
     pdf.set_font("Arial", "B", 16)
@@ -198,9 +205,11 @@ if st.session_state.get("assessment_submitted"):
     pdf.cell(0, 10, f"Governance Score: {st.session_state['dg_score']:.0f}%", ln=True)
     pdf.cell(0, 10, f"Quality Score: {st.session_state['dq_score']:.0f}%", ln=True)
     pdf.cell(0, 10, f"Metadata Score: {st.session_state['mm_score']:.0f}%", ln=True)
+
     tmp = tempfile.NamedTemporaryFile(delete=False, suffix=".pdf")
     pdf.output(tmp.name)
     st.download_button("Download Report (PDF)", data=open(tmp.name, 'rb').read(), file_name="ROKAA_Report.pdf", mime="application/pdf")
+
 
 
 
