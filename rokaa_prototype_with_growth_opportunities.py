@@ -143,6 +143,11 @@ if st.session_state.get("assessment_submitted"):
     fig.add_trace(go.Scatterpolar(r=aspirational + [aspirational[0]], theta=categories + [categories[0]], fill='toself', name='Your Aspirational Maturity'))
     fig.update_layout(polar=dict(radialaxis=dict(range=[0, 100])), showlegend=True)
     st.plotly_chart(fig)
+st.write("✅ DEBUG: Reached post-radar logic.")
+st.write("Segment:", st.session_state.get("segment"))
+st.write("Industry:", st.session_state.get("industry"))
+st.write("Submitted:", st.session_state.get("assessment_submitted"))
+
 st.write("⬇️ Below are opportunities and risks based on your data maturity profile:")
 
     # --- Opportunities for Business Growth ---
