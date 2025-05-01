@@ -118,7 +118,8 @@ st.write("DG1:", dg1, "| DG2:", dg2)
 st.write("DQ1:", dq1, "| DQ2:", dq2)
 st.write("MM1:", mm1, "| MM2:", mm2)
 
-        st.rerun()
+# st.rerun()
+
 if st.session_state.get("assessment_submitted"):
 
     st.subheader("Your Data Maturity Overview (%)")
