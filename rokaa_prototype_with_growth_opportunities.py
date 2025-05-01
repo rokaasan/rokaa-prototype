@@ -117,6 +117,53 @@ if st.session_state.get("assessment_submitted"):
 
     st.subheader("Your Data Maturity Overview (%)")
 
+    # 🔍 Debug printout to verify session state after rerun
+    st.code(f"""
+    Segment: {st.session_state.get("segment")}
+    Industry: {st.session_state.get("industry")}
+    Markets: {st.session_state.get("markets")}
+    Goals: {st.session_state.get("goals")}
+    DG: {st.session_state.get("dg_score")}, DQ: {st.session_state.get("dq_score")}, MM: {st.session_state.get("mm_score")}
+    """)
+
+    # Assign stored values to local fallback variables
+    segment = st.session_state.get("segment", "Startup")
+    industry = st.session_state.get("industry", "Other")
+    goals = st.session_state.get("goals", "")
+    markets = st.session_state.get("markets", [])
+    dg_score = st.session_state.get("dg_score", 0)
+    dq_score = st.session_state.get("dq_score", 0)
+    mm_score = st.session_state.get("mm_score", 0)
+    asp_gov = st.session_state.get("asp_gov", 60)
+    asp_qual = st.session_state.get("asp_qual", 60)
+    asp_meta = st.session_state.get("asp_meta", 60)
+
+    categories = ["Data Governance", "Data Quality", "Metadata Management"]
+    user_values = [dg_score, dq_score, mm_score]
+    aspirational = [asp_gov, asp_qual, asp_meta]
+
+    if segment == "Startup":
+        baseline = [40, 35, 30]
+    elif segment == "SME":
+        baseline = [60, 55, 50]
+    else:
+        baseline = [75, 70, 65]
+
+    fig = go.Figure()
+    fig.add_trace(go.Scatterpolar(r=baseline + [baseline[0]], theta=categories + [categories[0]],
+                                  fill='none', name='Peer Baseline'))
+    fig.add_trace(go.Scatterpolar(r=user_values + [user_values[0]], theta=categories + [categories[0]],
+                                  fill='toself', name='Your Current Maturity'))
+    fig.add_trace(go.Scatterpolar(r=aspirational + [aspirational[0]], theta=categories + [categories[0]],
+                                  fill='toself', name='Your Aspirational Maturity'))
+    fig.update_layout(polar=dict(radialaxis=dict(range=[0, 100])), showlegend=True)
+    st.plotly_chart(fig)
+
+    st.write("⬇️ Below are opportunities and risks based on your data maturity profile:")
+
+
+    st.subheader("Your Data Maturity Overview (%)")
+
     categories = ["Data Governance", "Data Quality", "Metadata Management"]
     user_values = [
         st.session_state["dg_score"],
