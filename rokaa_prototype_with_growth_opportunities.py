@@ -3,7 +3,7 @@ import plotly.graph_objects as go
 from fpdf import FPDF
 import tempfile
 
-st.set_page_config(page_title="ROKAA Assessment", layout="wide")
+st.set_page_config(page_title="ROKAA Data Excellence Appraisal", layout="wide")
 
 st.title("Welcome to ROKAA")
 st.subheader("Your data transformation journey starts here.")
@@ -17,11 +17,11 @@ if bot_question:
         "data quality": "Data quality is about ensuring data is accurate, complete, timely, and reliable for decision-making.",
         "metadata management": "Metadata management helps you understand what data you have, where it lives, and how it’s used."
     }
-    response = next((ans for key, ans in bot_knowledge.items() if key in bot_question.lower()), 
+    response = next((ans for key, ans in bot_knowledge.items() if key in bot_question.lower()),
                     "That’s a great question! I’ll flag this for deeper support in the future.")
     st.sidebar.markdown(f"**Joey:** {response}")
 
-# --- Progress Bar ---
+# Progress bar
 if not st.session_state.get("ready_for_assessment"):
     st.progress(20)
 elif not st.session_state.get("assessment_submitted"):
@@ -31,7 +31,7 @@ else:
 
 st.divider()
 
-# --- Capture Basic KYC with safer session storage ---
+# ---------------- KYC ---------------- #
 st.header("Tell us about your business")
 
 if "segment" not in st.session_state:
@@ -40,35 +40,35 @@ if "industry" not in st.session_state:
     st.session_state["industry"] = ""
 
 st.session_state["segment"] = st.selectbox(
-    "Which best describes your organisation?", 
-    ["Startup", "SME", "Corporate"], 
+    "Which best describes your organisation?",
+    ["Startup", "SME", "Corporate"],
     key="segment_select"
 )
 
 company_name = st.text_input("What is your company name?", key="company_name")
 
 st.session_state["industry"] = st.selectbox(
-    "Which industry best describes your business?", 
-    ["HealthTech", "FinTech", "B2B SaaS", "ClimateTech", "EdTech", "Other"], 
+    "Which industry best describes your business?",
+    ["HealthTech", "FinTech", "B2B SaaS", "ClimateTech", "EdTech", "Other"],
     key="industry_select"
 )
 
 years_operating = st.number_input(
-    "How many years has your company been operating?", 
-    min_value=0, max_value=100, 
-    value=0, 
+    "How many years has your company been operating?",
+    min_value=0, max_value=100,
+    value=0,
     key="years_operating"
 )
 
 funding_status = st.radio(
-    "What is your current funding status?", 
-    ["Self-funded / Bootstrapped", "Pre-seed / Seed", "Series A+", "Not sure"], 
+    "What is your current funding status?",
+    ["Self-funded / Bootstrapped", "Pre-seed / Seed", "Series A+", "Not sure"],
     key="funding_status"
 )
 
 markets = st.multiselect(
-    "Which markets do you serve?", 
-    ["Australia", "New Zealand", "Asia-Pacific", "North America", "Europe", "Latin America", "Other"], 
+    "Which markets do you serve?",
+    ["Australia", "New Zealand", "Asia-Pacific", "North America", "Europe", "Latin America", "Other"],
     key="markets"
 )
 
@@ -102,7 +102,6 @@ if st.session_state.get("ready_for_assessment"):
     asp_qual = st.slider("Desired future state for Data Quality", 0, 100, 70)
     asp_meta = st.slider("Desired future state for Metadata Management", 0, 100, 70)
 
-    # Define score_map here
     score_map = {"Yes": 2, "No": 0, "In Progress": 1, "Not Sure": 0, "Somewhat": 1, "Partially": 1}
 
     if st.button("Submit Assessment"):
@@ -113,13 +112,7 @@ if st.session_state.get("ready_for_assessment"):
         st.session_state["asp_gov"] = asp_gov
         st.session_state["asp_qual"] = asp_qual
         st.session_state["asp_meta"] = asp_meta
-        st.write("DEBUG - Scored Inputs:")
-st.write("DG1:", dg1, "| DG2:", dg2)
-st.write("DQ1:", dq1, "| DQ2:", dq2)
-st.write("MM1:", mm1, "| MM2:", mm2)
-
-# st.rerun()
-
+        st.rerun()
 if st.session_state.get("assessment_submitted"):
 
     st.subheader("Your Data Maturity Overview (%)")
@@ -144,19 +137,18 @@ if st.session_state.get("assessment_submitted"):
         baseline = [75, 70, 65]
 
     fig = go.Figure()
-    fig.add_trace(go.Scatterpolar(r=baseline + [baseline[0]], theta=categories + [categories[0]], fill='none', name='Peer Baseline'))
-    fig.add_trace(go.Scatterpolar(r=user_values + [user_values[0]], theta=categories + [categories[0]], fill='toself', name='Your Current Maturity'))
-    fig.add_trace(go.Scatterpolar(r=aspirational + [aspirational[0]], theta=categories + [categories[0]], fill='toself', name='Your Aspirational Maturity'))
+    fig.add_trace(go.Scatterpolar(r=baseline + [baseline[0]], theta=categories + [categories[0]],
+                                  fill='none', name='Peer Baseline'))
+    fig.add_trace(go.Scatterpolar(r=user_values + [user_values[0]], theta=categories + [categories[0]],
+                                  fill='toself', name='Your Current Maturity'))
+    fig.add_trace(go.Scatterpolar(r=aspirational + [aspirational[0]], theta=categories + [categories[0]],
+                                  fill='toself', name='Your Aspirational Maturity'))
     fig.update_layout(polar=dict(radialaxis=dict(range=[0, 100])), showlegend=True)
     st.plotly_chart(fig)
-st.write("✅ DEBUG: Reached post-radar logic.")
-st.write("Segment:", st.session_state.get("segment"))
-st.write("Industry:", st.session_state.get("industry"))
-st.write("Submitted:", st.session_state.get("assessment_submitted"))
 
-st.write("⬇️ Below are opportunities and risks based on your data maturity profile:")
+    st.write("⬇️ Below are opportunities and risks based on your data maturity profile:")
 
-    # --- Opportunities for Business Growth ---
+    # ---------------- Opportunities ---------------- #
     st.subheader("Opportunities for Business Growth")
 
     industry_cases = {
@@ -178,7 +170,7 @@ st.write("⬇️ Below are opportunities and risks based on your data maturity p
     else:
         st.info("We’ll tailor growth opportunities as we learn more about your industry.")
 
-    # --- Key Risks Identified ---
+    # ---------------- Risks ---------------- #
     st.subheader("Key Risks Identified")
     risks = []
     markets = st.session_state.get("markets", [])
@@ -206,22 +198,31 @@ st.write("⬇️ Below are opportunities and risks based on your data maturity p
             st.warning(r)
     else:
         st.success("✅ No major data risks identified — great foundation to build on!")
-
-    # --- PDF Summary ---
+    # ---------------- PDF Summary ---------------- #
     pdf = FPDF()
     pdf.add_page()
     pdf.set_font("Arial", "B", 16)
     pdf.cell(0, 10, "ROKAA Data Excellence Appraisal Prototype", ln=True)
+
     pdf.set_font("Arial", "", 12)
     pdf.cell(0, 10, f"Segment: {st.session_state['segment']}", ln=True)
+    pdf.cell(0, 10, f"Industry: {st.session_state['industry']}", ln=True)
     pdf.cell(0, 10, f"Governance Score: {st.session_state['dg_score']:.0f}%", ln=True)
     pdf.cell(0, 10, f"Quality Score: {st.session_state['dq_score']:.0f}%", ln=True)
     pdf.cell(0, 10, f"Metadata Score: {st.session_state['mm_score']:.0f}%", ln=True)
 
+    pdf.cell(0, 10, "Aspirational Targets:", ln=True)
+    pdf.cell(0, 10, f"- Governance: {st.session_state['asp_gov']}%", ln=True)
+    pdf.cell(0, 10, f"- Quality: {st.session_state['asp_qual']}%", ln=True)
+    pdf.cell(0, 10, f"- Metadata: {st.session_state['asp_meta']}%", ln=True)
+
     tmp = tempfile.NamedTemporaryFile(delete=False, suffix=".pdf")
     pdf.output(tmp.name)
-    st.download_button("Download Report (PDF)", data=open(tmp.name, 'rb').read(), file_name="ROKAA_Report.pdf", mime="application/pdf")
 
-
-
+    st.download_button(
+        label="📄 Download Appraisal Report (PDF)",
+        data=open(tmp.name, 'rb').read(),
+        file_name="ROKAA_Data_Excellence_Appraisal.pdf",
+        mime="application/pdf"
+    )
 
