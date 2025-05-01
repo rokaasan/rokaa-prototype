@@ -107,12 +107,17 @@ if st.session_state.get("ready_for_assessment"):
 
     if st.button("Submit Assessment"):
         st.session_state["assessment_submitted"] = True
-        st.session_state["dg_score"] = (score_map[dg1] + score_map[dg2]) / 3.0 * 80
-        st.session_state["dq_score"] = (score_map[dq1] + score_map[dq2]) / 3.0 * 80
-        st.session_state["mm_score"] = (score_map[mm1] + score_map[mm2]) / 3.0 * 80
+        st.session_state["dg_score"] = (score_map[dg1] + score_map[dg2]) / 4.0 * 100
+        st.session_state["dq_score"] = (score_map[dq1] + score_map[dq2]) / 4.0 * 100
+        st.session_state["mm_score"] = (score_map[mm1] + score_map[mm2]) / 4.0 * 100
         st.session_state["asp_gov"] = asp_gov
         st.session_state["asp_qual"] = asp_qual
         st.session_state["asp_meta"] = asp_meta
+        st.write("DEBUG - Scored Inputs:")
+st.write("DG1:", dg1, "| DG2:", dg2)
+st.write("DQ1:", dq1, "| DQ2:", dq2)
+st.write("MM1:", mm1, "| MM2:", mm2)
+
         st.rerun()
 if st.session_state.get("assessment_submitted"):
 
