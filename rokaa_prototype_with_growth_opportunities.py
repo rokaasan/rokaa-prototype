@@ -193,7 +193,6 @@ if st.session_state.get("assessment_submitted"):
     fig.update_layout(polar=dict(radialaxis=dict(range=[0, 100])), showlegend=True)
     st.plotly_chart(fig, use_container_width=True, key="radar_chart")
 
-
     st.write("⬇️ Below are opportunities and risks based on your data maturity profile:")
 
     # ---------------- Opportunities ---------------- #
