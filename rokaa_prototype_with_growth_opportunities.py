@@ -113,154 +113,58 @@ if st.session_state.get("ready_for_assessment"):
         st.session_state["asp_qual"] = asp_qual
         st.session_state["asp_meta"] = asp_meta
         st.rerun()
-if st.session_state.get("assessment_submitted"):
-
-    st.subheader("Your Data Maturity Overview (%)")
-
-    # 🔍 Debug printout to verify session state after rerun
-    st.code(f"""
-    Segment: {st.session_state.get("segment")}
-    Industry: {st.session_state.get("industry")}
-    Markets: {st.session_state.get("markets")}
-    Goals: {st.session_state.get("goals")}
-    DG: {st.session_state.get("dg_score")}, DQ: {st.session_state.get("dq_score")}, MM: {st.session_state.get("mm_score")}
+# --- Final Output and Insights ---
+if st.session_state.get("assessment_submitted") and st.session_state.get("scores_calculated"):
+    
+    # Summary Header
+    st.subheader("📊 Your Data Maturity Overview (%)")
+    
+    # Maturity Score Breakdown
+    st.markdown(f"""
+    **Segment:** {st.session_state.get("segment")}  
+    **Industry:** {st.session_state.get("industry")}  
+    **Markets:** {st.session_state.get("markets")}  
+    **Goals:** {st.session_state.get("goals")}  
+    **DG:** {st.session_state.get("dg_score"):.1f}, **DQ:** {st.session_state.get("dq_score"):.1f}, **MM:** {st.session_state.get("mm_score"):.1f}
     """)
 
-    # Assign stored values to local fallback variables
-    segment = st.session_state.get("segment", "Startup")
-    industry = st.session_state.get("industry", "Other")
-    goals = st.session_state.get("goals", "")
-    markets = st.session_state.get("markets", [])
-    dg_score = st.session_state.get("dg_score", 0)
-    dq_score = st.session_state.get("dq_score", 0)
-    mm_score = st.session_state.get("mm_score", 0)
-    asp_gov = st.session_state.get("asp_gov", 60)
-    asp_qual = st.session_state.get("asp_qual", 60)
-    asp_meta = st.session_state.get("asp_meta", 60)
+    # Radar Chart
+    fig = create_radar_chart(
+        st.session_state.get("dg_score"),
+        st.session_state.get("dq_score"),
+        st.session_state.get("mm_score"),
+        st.session_state.get("aspirational_scores"),
+        st.session_state.get("peer_scores")
+    )
+    st.plotly_chart(fig, use_container_width=True)
 
-    categories = ["Data Governance", "Data Quality", "Metadata Management"]
-    user_values = [dg_score, dq_score, mm_score]
-    aspirational = [asp_gov, asp_qual, asp_meta]
+    # Opportunities and Risks
+    st.markdown("⬇️ Below are opportunities and risks based on your data maturity profile:")
 
-    if segment == "Startup":
-        baseline = [40, 35, 30]
-    elif segment == "SME":
-        baseline = [60, 55, 50]
-    else:
-        baseline = [75, 70, 65]
-
-    fig = go.Figure()
-    fig.add_trace(go.Scatterpolar(r=baseline + [baseline[0]], theta=categories + [categories[0]],
-                                  fill='none', name='Peer Baseline'))
-    fig.add_trace(go.Scatterpolar(r=user_values + [user_values[0]], theta=categories + [categories[0]],
-                                  fill='toself', name='Your Current Maturity'))
-    fig.add_trace(go.Scatterpolar(r=aspirational + [aspirational[0]], theta=categories + [categories[0]],
-                                  fill='toself', name='Your Aspirational Maturity'))
-    fig.update_layout(polar=dict(radialaxis=dict(range=[0, 100])), showlegend=True)
-   
-    st.subheader("Your Data Maturity Overview (%)")
-
-    categories = ["Data Governance", "Data Quality", "Metadata Management"]
-    user_values = [
-        st.session_state["dg_score"],
-        st.session_state["dq_score"],
-        st.session_state["mm_score"]
-    ]
-    aspirational = [
-        st.session_state["asp_gov"],
-        st.session_state["asp_qual"],
-        st.session_state["asp_meta"]
-    ]
-
-    if st.session_state["segment"] == "Startup":
-        baseline = [40, 35, 30]
-    elif st.session_state["segment"] == "SME":
-        baseline = [60, 55, 50]
-    else:
-        baseline = [75, 70, 65]
-
-    fig = go.Figure()
-    fig.add_trace(go.Scatterpolar(r=baseline + [baseline[0]], theta=categories + [categories[0]],
-                                  fill='none', name='Peer Baseline'))
-    fig.add_trace(go.Scatterpolar(r=user_values + [user_values[0]], theta=categories + [categories[0]],
-                                  fill='toself', name='Your Current Maturity'))
-    fig.add_trace(go.Scatterpolar(r=aspirational + [aspirational[0]], theta=categories + [categories[0]],
-                                  fill='toself', name='Your Aspirational Maturity'))
-    fig.update_layout(polar=dict(radialaxis=dict(range=[0, 100])), showlegend=True)
-    st.plotly_chart(fig, use_container_width=True, key="radar_chart")
-
-    st.write("⬇️ Below are opportunities and risks based on your data maturity profile:")
-
-    # ---------------- Opportunities ---------------- #
+    # --- Business Growth Opportunities ---
     st.subheader("Opportunities for Business Growth")
+    for opp in st.session_state.get("growth_opportunities", []):
+        st.markdown(f"### {opp['icon']} {opp['title']}")
+        st.markdown(opp['description'])
+        st.markdown(f"*Potential Value: {opp['value']}*")
 
-    industry_cases = {
-        "HealthTech": [
-            {"title": "📈 Patient Flow Optimization", "desc": "Streamline onboarding with standardized data models and centralized data catalogs.", "value": "Potential Value: Reduce admin time by 20% across care sites."},
-            {"title": "⚙️ AI-Ready Data Infrastructure", "desc": "Governed, high-quality data enables ML-driven triage and virtual health.", "value": "Potential Value: Speed to MVP by 3–6 months."},
-            {"title": "📊 Clinical Compliance Acceleration", "desc": "Automate regulatory reporting (e.g., for GDPR, HIPAA) with structured metadata.", "value": "Potential Value: Save $50K+ in audit and admin overhead."}
-        ],
-        "FinTech": [
-            {"title": "💡 Customer Segmentation & Personalization", "desc": "Use trusted data to enable personalized product offers and retention models.", "value": "Potential Value: 15–30% lift in customer conversion."},
-            {"title": "🔒 Risk & Fraud Detection", "desc": "Improve fraud detection accuracy with consistent metadata and training data.", "value": "Potential Value: $100K+ in fraud mitigation annually."}
-        ]
-    }
+    # --- Risks to Consider ---
+    st.subheader("Risks to Consider")
+    for risk in st.session_state.get("risks", []):
+        st.markdown(f"### {risk['icon']} {risk['title']}")
+        st.markdown(risk['description'])
+        st.markdown(f"*Risk Level: {risk['level']}*")
 
-    industry_selected = st.session_state.get("industry", "")
-    if industry_selected and industry_selected in industry_cases:
-        for case in industry_cases[industry_selected]:
-            st.markdown(f"**{case['title']}**  \n{case['desc']}  \n*{case['value']}*  \n")
-    else:
-        st.info("We’ll tailor growth opportunities as we learn more about your industry.")
-
-    # ---------------- Risks ---------------- #
-    st.subheader("Key Risks Identified")
-    risks = []
-    markets = st.session_state.get("markets", [])
-    goals = st.session_state.get("goals", "")
-
-    if "Europe" in markets or "North America" in markets:
-        if st.session_state["dg_score"] < 60:
-            risks.append("⚠️ *Regulatory Exposure*: You're operating in international markets but lack strong data governance.\n**Why this matters:** Regulations like GDPR and CCPA carry significant penalties and reputational risks.")
-
-    if st.session_state["dq_score"] < 50:
-        risks.append("⚠️ *Poor Data Quality*: Inadequate checks on critical data.\n**Why this matters:** Poor data quality leads to bad decisions, customer dissatisfaction, and limits automation or AI effectiveness.")
-
-    if st.session_state["mm_score"] < 50:
-        risks.append("⚠️ *Metadata Gaps*: Weak or missing metadata practices.\n**Why this matters:** Without metadata, teams waste time finding, understanding, and revalidating data.")
-
-    if "ai" in goals.lower() or "machine learning" in goals.lower():
-        if st.session_state["dq_score"] < 60 or st.session_state["dg_score"] < 60:
-            risks.append("⚠️ *AI Risk*: AI/ML ambitions with insufficient data maturity.\n**Why this matters:** Poor data foundations will lead to unreliable models, biased outcomes, and operational inefficiencies.")
-
-    if st.session_state["segment"] == "Startup" and st.session_state["dg_score"] < 40:
-        risks.append("⚠️ *Foundational Risk*: Low governance in early-stage company.\n**Why this matters:** Startups that neglect data structure early face scalability issues and trust breakdowns later.")
-
-    if risks:
-        for r in risks:
-            st.warning(r)
-    else:
-        st.success("✅ No major data risks identified — great foundation to build on!")
-    # ---------------- PDF Summary ---------------- #
-    pdf = FPDF()
-    pdf.add_page()
-    pdf.set_font("Arial", "B", 16)
-    pdf.cell(0, 10, "ROKAA Data Excellence Appraisal Prototype", ln=True)
-
-    pdf.set_font("Arial", "", 12)
-    pdf.cell(0, 10, f"Segment: {st.session_state['segment']}", ln=True)
-    pdf.cell(0, 10, f"Industry: {st.session_state['industry']}", ln=True)
-    pdf.cell(0, 10, f"Governance Score: {st.session_state['dg_score']:.0f}%", ln=True)
-    pdf.cell(0, 10, f"Quality Score: {st.session_state['dq_score']:.0f}%", ln=True)
-    pdf.cell(0, 10, f"Metadata Score: {st.session_state['mm_score']:.0f}%", ln=True)
-
-    pdf.cell(0, 10, "Aspirational Targets:", ln=True)
-    pdf.cell(0, 10, f"- Governance: {st.session_state['asp_gov']}%", ln=True)
-    pdf.cell(0, 10, f"- Quality: {st.session_state['asp_qual']}%", ln=True)
-    pdf.cell(0, 10, f"- Metadata: {st.session_state['asp_meta']}%", ln=True)
-
-    tmp = tempfile.NamedTemporaryFile(delete=False, suffix=".pdf")
-    pdf.output(tmp.name)
+    # --- Optional Debug: uncomment if needed ---
+    # st.code(f"""
+    # Segment: {st.session_state.get("segment")}
+    # Industry: {st.session_state.get("industry")}
+    # Markets: {st.session_state.get("markets")}
+    # Goals: {st.session_state.get("goals")}
+    # DG: {st.session_state.get("dg_score")}
+    # DQ: {st.session_state.get("dq_score")}
+    # MM: {st.session_state.get("mm_score")}
+    # """)
 
     st.download_button(
         label="📄 Download Appraisal Report (PDF)",
