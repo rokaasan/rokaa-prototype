@@ -4,6 +4,9 @@ from fpdf import FPDF
 import tempfile
 
 st.set_page_config(page_title="ROKAA Data Excellence Appraisal", layout="wide")
+# Initialize session state for assessment submission
+if "assessment_submitted" not in st.session_state:
+    st.session_state["assessment_submitted"] = False
 
 st.title("Welcome to ROKAA")
 st.subheader("Your data transformation journey starts here.")
