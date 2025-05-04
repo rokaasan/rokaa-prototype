@@ -136,17 +136,18 @@ if st.session_state.get("assessment_submitted") and st.session_state.get("scores
     # --- Business Growth Opportunities ---
     st.subheader("Opportunities for Business Growth")
     for opp in st.session_state.get("growth_opportunities", []):
-        st.markdown(f"### {opp['icon']} {opp['title']}")
+        st.markdown(f"#### {opp['icon']} {opp['title']}")
         st.markdown(opp['description'])
         st.markdown(f"*Potential Value: {opp['value']}*")
 
     # --- Risks to Consider ---
     st.subheader("Risks to Consider")
     for risk in st.session_state.get("risks", []):
-        st.markdown(f"### {risk['icon']} {risk['title']}")
+        st.markdown(f"#### {risk['icon']} {risk['title']}")
         st.markdown(risk['description'])
         st.markdown(f"*Risk Level: {risk['level']}*")
 
+    # --- PDF Download Button ---
     st.download_button(
         label="📄 Download Appraisal Report (PDF)",
         data=open(tmp.name, 'rb').read(),
