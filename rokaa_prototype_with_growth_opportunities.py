@@ -116,20 +116,17 @@ if st.session_state.get("ready_for_assessment"):
         st.session_state["asp_qual"] = asp_qual
         st.session_state["asp_meta"] = asp_meta
         st.rerun()
+
 # --- Final Output and Insights ---
-    
-    # Summary Header
+if st.session_state.get("assessment_submitted") and st.session_state.get("scores_calculated"):
 
     # Radar Chart
-    if st.session_state.get("assessment_submitted") and st.session_state.get("scores_calculated"):
-
-        # Radar Chart
-        fig = create_radar_chart(
-            st.session_state.get("dg_score"),
-            st.session_state.get("dq_score"),
-            st.session_state.get("mm_score"),
-            st.session_state.get("aspirational_scores"),
-            st.session_state.get("peer_scores")
+    fig = create_radar_chart(
+        st.session_state.get("dg_score"),
+        st.session_state.get("dq_score"),
+        st.session_state.get("mm_score"),
+        st.session_state.get("aspirational_scores"),
+        st.session_state.get("peer_scores")
     )
     st.plotly_chart(fig, use_container_width=True)
 
@@ -150,11 +147,10 @@ if st.session_state.get("ready_for_assessment"):
         st.markdown(risk['description'])
         st.markdown(f"*Risk Level: {risk['level']}*")
 
-    # Download Button
     st.download_button(
         label="📄 Download Appraisal Report (PDF)",
         data=open(tmp.name, 'rb').read(),
         file_name="ROKAA_Data_Excellence_Appraisal.pdf",
         mime="application/pdf"
     )
-
+       
