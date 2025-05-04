@@ -131,7 +131,8 @@ if st.session_state.get("assessment_submitted") and st.session_state.get("scores
     st.plotly_chart(fig, use_container_width=True)
 
     # Opportunities and Risks
-    st.markdown("⬇️ Below are opportunities and risks based on your data maturity profile:")
+    st.markdown("### Below are opportunities and risks based on your data maturity profile:")
+
 
     # --- Business Growth Opportunities ---
     st.subheader("Opportunities for Business Growth")
