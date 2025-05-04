@@ -133,7 +133,6 @@ if st.session_state.get("assessment_submitted") and st.session_state.get("scores
     # Opportunities and Risks
     st.markdown("### Below are opportunities and risks based on your data maturity profile:")
 
-
     # --- Business Growth Opportunities ---
     st.subheader("Opportunities for Business Growth")
     for opp in st.session_state.get("growth_opportunities", []):
@@ -154,4 +153,5 @@ if st.session_state.get("assessment_submitted") and st.session_state.get("scores
         file_name="ROKAA_Data_Excellence_Appraisal.pdf",
         mime="application/pdf"
     )
+
        
