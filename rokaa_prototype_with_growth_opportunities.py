@@ -153,5 +153,3 @@ if st.session_state.get("assessment_submitted") and st.session_state.get("scores
         file_name="ROKAA_Data_Excellence_Appraisal.pdf",
         mime="application/pdf"
     )
-
-       
