@@ -120,16 +120,6 @@ if st.session_state.get("ready_for_assessment"):
 if st.session_state.get("assessment_submitted") and st.session_state.get("scores_calculated"):
     
     # Summary Header
-    st.subheader("📊 Your Data Maturity Overview (%)")
-    
-    # Maturity Score Breakdown
-    st.markdown(f"""
-    **Segment:** {st.session_state.get("segment")}  
-    **Industry:** {st.session_state.get("industry")}  
-    **Markets:** {st.session_state.get("markets")}  
-    **Goals:** {st.session_state.get("goals")}  
-    **DG:** {st.session_state.get("dg_score"):.1f}, **DQ:** {st.session_state.get("dq_score"):.1f}, **MM:** {st.session_state.get("mm_score"):.1f}
-    """)
 
     # Radar Chart
     fig = create_radar_chart(
