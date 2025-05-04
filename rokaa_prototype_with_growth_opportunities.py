@@ -122,6 +122,9 @@ if st.session_state.get("assessment_submitted") and st.session_state.get("scores
     # Summary Header
 
     # Radar Chart
+if st.session_state.get("assessment_submitted") and st.session_state.get("scores_calculated"):
+
+    # Radar Chart
     fig = create_radar_chart(
         st.session_state.get("dg_score"),
         st.session_state.get("dq_score"),
@@ -148,17 +151,7 @@ if st.session_state.get("assessment_submitted") and st.session_state.get("scores
         st.markdown(risk['description'])
         st.markdown(f"*Risk Level: {risk['level']}*")
 
-    # --- Optional Debug: uncomment if needed ---
-    # st.code(f"""
-    # Segment: {st.session_state.get("segment")}
-    # Industry: {st.session_state.get("industry")}
-    # Markets: {st.session_state.get("markets")}
-    # Goals: {st.session_state.get("goals")}
-    # DG: {st.session_state.get("dg_score")}
-    # DQ: {st.session_state.get("dq_score")}
-    # MM: {st.session_state.get("mm_score")}
-    # """)
-
+    # Download Button
     st.download_button(
         label="📄 Download Appraisal Report (PDF)",
         data=open(tmp.name, 'rb').read(),
