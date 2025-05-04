@@ -123,13 +123,13 @@ if st.session_state.get("ready_for_assessment"):
     # Radar Chart
     if st.session_state.get("assessment_submitted") and st.session_state.get("scores_calculated"):
 
-    # Radar Chart
-    fig = create_radar_chart(
-        st.session_state.get("dg_score"),
-        st.session_state.get("dq_score"),
-        st.session_state.get("mm_score"),
-        st.session_state.get("aspirational_scores"),
-        st.session_state.get("peer_scores")
+        # Radar Chart
+        fig = create_radar_chart(
+            st.session_state.get("dg_score"),
+            st.session_state.get("dq_score"),
+            st.session_state.get("mm_score"),
+            st.session_state.get("aspirational_scores"),
+            st.session_state.get("peer_scores")
     )
     st.plotly_chart(fig, use_container_width=True)
 
