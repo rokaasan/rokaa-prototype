@@ -117,12 +117,11 @@ if st.session_state.get("ready_for_assessment"):
         st.session_state["asp_meta"] = asp_meta
         st.rerun()
 # --- Final Output and Insights ---
-if st.session_state.get("assessment_submitted") and st.session_state.get("scores_calculated"):
     
     # Summary Header
 
     # Radar Chart
-if st.session_state.get("assessment_submitted") and st.session_state.get("scores_calculated"):
+    if st.session_state.get("assessment_submitted") and st.session_state.get("scores_calculated"):
 
     # Radar Chart
     fig = create_radar_chart(
