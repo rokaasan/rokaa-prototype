@@ -115,6 +115,7 @@ if st.session_state.get("ready_for_assessment"):
         st.session_state["asp_gov"] = asp_gov
         st.session_state["asp_qual"] = asp_qual
         st.session_state["asp_meta"] = asp_meta
+        st.session_state["scores_calculated"] = True
         st.rerun()
 
 # --- Final Output and Insights ---
