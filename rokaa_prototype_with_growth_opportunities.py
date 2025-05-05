@@ -119,6 +119,10 @@ if st.session_state.get("ready_for_assessment"):
         st.rerun()
 
 # --- Final Output and Insights ---
+st.write("Debug Info:")
+st.write("Assessment submitted?", st.session_state.get("assessment_submitted"))
+st.write("Scores calculated?", st.session_state.get("scores_calculated"))
+
 if st.session_state.get("assessment_submitted") and st.session_state.get("scores_calculated"):
 
     # Radar Chart
