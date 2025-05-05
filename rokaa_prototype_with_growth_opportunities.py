@@ -2,6 +2,44 @@ import streamlit as st
 import plotly.graph_objects as go
 from fpdf import FPDF
 import tempfile
+def create_radar_chart(dg_score, dq_score, mm_score, asp_scores, peer_scores):
+    categories = ["Data Governance", "Data Quality", "Metadata Management"]
+
+    fig = go.Figure()
+
+    # Current Scores
+    fig.add_trace(go.Scatterpolar(
+        r=[dg_score, dq_score, mm_score],
+        theta=categories,
+        fill='toself',
+        name='Your Score'
+    ))
+
+    # Aspirational Scores
+    fig.add_trace(go.Scatterpolar(
+        r=asp_scores,
+        theta=categories,
+        fill='toself',
+        name='Aspirational'
+    ))
+
+    # Peer Scores (optional)
+    if peer_scores:
+        fig.add_trace(go.Scatterpolar(
+            r=peer_scores,
+            theta=categories,
+            fill='toself',
+            name='Peer Average'
+        ))
+
+    fig.update_layout(
+        polar=dict(
+            radialaxis=dict(visible=True, range=[0, 100])
+        ),
+        showlegend=True
+    )
+
+    return fig
 
 st.set_page_config(page_title="ROKAA Data Excellence Appraisal", layout="wide")
 # Initialize session state for assessment submission
