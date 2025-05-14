@@ -1,8 +1,8 @@
 
-import plotly.graph_objects as go
 import streamlit as st
+import plotly.graph_objects as go
 
-def render_radar_chart(scores, peer_scores, asp_scores):
+def display_radar_chart(scores, peer_scores, asp_scores):
     categories = list(scores.keys())
 
     fig = go.Figure()
@@ -11,29 +11,34 @@ def render_radar_chart(scores, peer_scores, asp_scores):
         r=list(scores.values()),
         theta=categories,
         fill='toself',
-        name='Your Scores'
+        name='Your Scores',
+        line_color='blue'
     ))
 
     fig.add_trace(go.Scatterpolar(
         r=list(peer_scores.values()),
         theta=categories,
         fill='toself',
-        name='Peer Standard'
+        name='Peer Benchmark',
+        line_color='orange'
     ))
 
     fig.add_trace(go.Scatterpolar(
         r=list(asp_scores.values()),
         theta=categories,
         fill='toself',
-        name='Aspirational Goal'
+        name='Your Aspiration',
+        line_color='green'
     ))
 
     fig.update_layout(
         polar=dict(
-            radialaxis=dict(visible=True, range=[0, 5])
+            radialaxis=dict(
+                visible=True,
+                range=[0, 5]
+            )
         ),
-        showlegend=True,
-        title="Data Maturity Comparison"
+        showlegend=True
     )
 
-    st.plotly_chart(fig)
+    st.plotly_chart(fig, use_container_width=True)
